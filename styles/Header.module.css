@@ -1,0 +1,141 @@
+.navbarnav {
+  display: flex;
+  flex-direction: row;
+  margin: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  /* background-color: #444; */
+}
+
+.navLogo {
+  display: flex;
+}
+
+.imgComp {
+  height: 50px;
+  width: 100px;
+  object-fit: cover;
+}
+.dropdownMenu {
+  z-index: 10;
+}
+.navbardet {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.optionsnav {
+  margin-left: 20px;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eachOp {
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.formSearch {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 22vw;
+  align-items: center;
+}
+
+.applyFilter {
+  margin-right: 10px;
+  position: relative;
+  align-self: center;
+  padding: 3px;
+  padding-top: 6px;
+
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.searchBar {
+  width: 15vw;
+}
+
+.darkHeader {
+  background-color: #333;
+  color: #fff;
+}
+
+.lightHeader {
+  background-color: #eee;
+  color: #333;
+}
+
+.darkMode {
+  background-color: #444;
+  color: #fff;
+}
+
+.lightMode {
+  background-color: #fff;
+  color: #333;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+/* 
+
+.main-navbar {
+  border-bottom: 1px solid #ccc;
+}
+.main-navbar .top-navbar {
+  background-color: #2874f0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.main-navbar .top-navbar .brand-name {
+  color: #fff;
+}
+.main-navbar .top-navbar .nav-link {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+}
+.main-navbar .top-navbar .dropdown-menu {
+  padding: 0px 0px;
+  border-radius: 0px;
+}
+.main-navbar .top-navbar .dropdown-menu .dropdown-item {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+}
+.main-navbar .top-navbar .dropdown-menu .dropdown-item i {
+  width: 20px;
+  text-align: center;
+  color: #2874f0;
+  font-size: 14px;
+}
+.main-navbar .navbar {
+  padding: 0px;
+  background-color: #ddd;
+}
+.main-navbar .navbar .nav-item .nav-link {
+  padding: 8px 20px;
+  color: #000;
+  font-size: 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  .main-navbar .top-navbar .nav-link {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+} */

@@ -1,0 +1,13 @@
+.btnPrice {
+  display: flex;
+  align-items: center;
+}
+.carttext {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+.emptyord {
+  margin: 10px;
+  margin-bottom: 20px;
+}
