@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/ProductCartItem.module.css";
+import { useTheme } from "../context/ThemeContextProvider";
 
 const ProductCartItem = ({
   item,
@@ -9,7 +10,7 @@ const ProductCartItem = ({
   setcartChange,
 }) => {
   const [product, setproduct] = useState(null);
-
+  const { isDarkTheme } = useTheme();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -95,7 +96,11 @@ const ProductCartItem = ({
     product && (
       <div>
         <div className={`card ${styles.card}`}>
-          <div className="card-body">
+          <div
+            className={`${
+              isDarkTheme ? styles.darkMode : styles.lightMode
+            } card-body`}
+          >
             <div className="d-flex justify-content-between">
               <div className="d-flex flex-row align-items-center">
                 <div>

@@ -12,6 +12,7 @@ const Products = () => {
     filterContext,
     avgratingContext,
     searchTextContext,
+    isDarkTheme,
   } = useTheme();
   const [products, setProducts] = useState([]);
   const [multiSelect, setMultiSelect] = useState([]);
@@ -139,7 +140,7 @@ const Products = () => {
   };
 
   return (
-    <div>
+    <div className={`${isDarkTheme ? styles.darkMode : styles.lightMode}`}>
       {isLoading ? (
         <div>Loading...</div>
       ) : (

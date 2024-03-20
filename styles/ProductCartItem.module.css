@@ -11,3 +11,16 @@
   margin: 10px;
   margin-bottom: 20px;
 }
+
+.darkMode {
+  background-color: #444;
+  color: #fff;
+}
+
+.lightMode {
+  background-color: #fff;
+  color: #333;
+}
+.black {
+  background-color: black;
+}

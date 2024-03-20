@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/ProductDetails.module.css";
 import Link from "next/link";
+import { useTheme } from "../../context/ThemeContextProvider";
 
 const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
+  const { isDarkTheme } = useTheme();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -76,11 +78,14 @@ const ProductDetails = () => {
   }
 
   return (
-    <div>
+    <div
+      className={`${styles.pageFull} ${
+        isDarkTheme ? styles.darkMode : styles.lightMode
+      }`}
+    >
       <section className="py-2">
         <div className="container">
           <Link href="/product" className={styles.backbtn}>
-            {" "}
             <button className="btn btn-primary shadow-0">Back</button>
           </Link>
           <div className="row gx-5">
@@ -128,7 +133,6 @@ const ProductDetails = () => {
             <main className={`col-lg-6 ${styles.wholeDet}`}>
               <div className="ps-lg-3 details">
                 <h4 className="title text-dark">{product?.title}</h4>
-
                 <div className="mb-3">
                   <span className="h5">${product?.price}</span>
                 </div>
@@ -137,9 +141,7 @@ const ProductDetails = () => {
                     {product?.rating} ★ Rating
                   </span>
                 </div>
-
                 <p>{product?.description}</p>
-
                 <hr />
               </div>
               <div className={styles.buttons}>
@@ -147,7 +149,6 @@ const ProductDetails = () => {
                   onClick={handleClick}
                   className="btn btn-primary shadow-0"
                 >
-                  {" "}
                   <i className="me-1 fa fa-shopping-basket" /> Add to cart{" "}
                 </button>
               </div>

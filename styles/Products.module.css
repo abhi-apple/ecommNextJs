@@ -8,15 +8,6 @@
   display: flex;
   justify-content: space-around;
 }
-.dark-header {
-  background-color: #333;
-  color: #fff;
-}
-
-.light-header {
-  background-color: #eee;
-  color: #333;
-}
 
 .addToCart {
   margin-right: 10px;
@@ -30,4 +21,24 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.darkHeader {
+  background-color: #333;
+  color: #fff;
+}
+
+.lightHeader {
+  background-color: #eee;
+  color: #333;
+}
+
+.darkMode {
+  background-color: #444;
+  color: #fff;
+}
+
+.lightMode {
+  background-color: #fff;
+  color: #333;
 }
