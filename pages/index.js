@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
+import { useTheme } from "../context/ThemeContextProvider";
 
 const Home = () => {
   const router = useRouter();
-
+  const { isDarkTheme } = useTheme();
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -14,7 +15,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
+    <div
+      className={`${styles.navbarnav} ${
+        isDarkTheme ? styles.darkMode : styles.lightMode
+      } ${styles.fullPage}`}
+    >
       <div className={styles.btns}>
         <Link className={styles.loginBtn} href="/login">
           Login

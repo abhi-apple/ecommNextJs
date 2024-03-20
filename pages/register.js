@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { REGISTER } from "./api/endpoints.js";
 import { fetchPost } from "./api/api.js";
 import styles from "../styles/Register.module.css";
+import { useTheme } from "../context/ThemeContextProvider.js";
 
 const Register = () => {
   const router = useRouter();
@@ -13,6 +14,7 @@ const Register = () => {
     password: "",
   });
 
+  const { isDarkTheme } = useTheme();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -41,60 +43,67 @@ const Register = () => {
   };
 
   return (
-    <div className={styles.registerContainer}>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit} className={styles.registerForm}>
-        <div className={styles.inputField}>
-          <label htmlFor="firstName">First Name</label>
-          <input
-            value={formData.firstName}
-            onChange={handleChange}
-            type="text"
-            name="firstName"
-            id="firstName"
-            required
-          />
-        </div>
-        <div className={styles.inputField}>
-          <label htmlFor="lastName">Last Name</label>
-          <input
-            value={formData.lastName}
-            onChange={handleChange}
-            type="text"
-            name="lastName"
-            id="lastName"
-            required
-          />
-        </div>
-        <div className={styles.inputField}>
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
-            type="text"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            name="phoneNumber"
-            id="phoneNumber"
-            required
-          />
-        </div>
-        <div className={styles.inputField}>
-          <label className={styles.label} htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            id="password"
-            className={styles.input}
-            required
-            name="password"
-          />
-        </div>
-        <button className={styles.submitButton} type="submit">
-          Register
-        </button>
-      </form>
+    <div
+      className={`${styles.navbarnav} ${
+        isDarkTheme ? styles.darkMode : styles.lightMode
+      }`}
+    >
+      <div className={styles.registerContainer}>
+        <h1>Register</h1>
+        <form onSubmit={handleSubmit} className={styles.registerForm}>
+          <div className={styles.inputField}>
+            <label htmlFor="firstName">First Name</label>
+            <input
+              value={formData.firstName}
+              onChange={handleChange}
+              type="text"
+              name="firstName"
+              id="firstName"
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputField}>
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              value={formData.lastName}
+              onChange={handleChange}
+              type="text"
+              name="lastName"
+              className={styles.input}
+              id="lastName"
+              required
+            />
+          </div>
+          <div className={styles.inputField}>
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <input
+              type="text"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              name="phoneNumber"
+              className={styles.input}
+              id="phoneNumber"
+              required
+            />
+          </div>
+          <div className={styles.inputField}>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              id="password"
+              className={styles.input}
+              required
+              name="password"
+            />
+          </div>
+          <button className={styles.submitButton} type="submit">
+            Register
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

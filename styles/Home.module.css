@@ -1,5 +1,5 @@
 .btns {
-  margin-top: 30px;
+  padding-top: 30px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -27,4 +27,19 @@
 .loginBtn:hover,
 .registerBtn:hover {
   opacity: 0.8;
+}
+
+.darkMode {
+  background-color: #444;
+  color: #fff;
+}
+
+.lightMode {
+  background-color: #fff;
+  color: #333;
+}
+
+.fullPage {
+  width: 100vw;
+  height: 90vh;
 }
