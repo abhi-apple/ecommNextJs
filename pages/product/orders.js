@@ -7,31 +7,38 @@ import { useRouter } from "next/router";
 import { fetchGetWithToken, fetchPost } from "../api/api";
 import { USER_DETAILS } from "../api/endpoints";
 import { useTheme } from "../../context/ThemeContextProvider";
+import { client } from "../../api/apolloClient";
+import { FETCH_USER_ORDERS } from "../../api/queries";
 
 const Orders = () => {
-  const [data, setData] = useState([]);
+  const [ordersData, setOrdersData] = useState([]);
   const { isDarkTheme } = useTheme();
   const [totalsum, setTotalSum] = useState(0);
-  const [cartChange, setCartChange] = useState(false);
+  // const [cartChange, setCartChange] = useState(false);
   const router = useRouter();
+  const [phoneNumber, setPhoneNumber] = useState(null);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-        } else {
-          const response = await fetchGetWithToken(USER_DETAILS, token);
-          setData(response.user.orders);
-        }
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    if (!phoneNumber) {
+      router.push("/");
+    }
+    setPhoneNumber(phoneNumber);
+    const fetchProd = async () => {
+      const { data, loading } = await client.query({
+        query: FETCH_USER_ORDERS,
+        variables: {
+          phoneNumber,
+        },
+      });
+      console.log(data, "this is data ");
+      if (!loading && data) {
+        setOrdersData(data.userOrders);
       }
     };
 
-    fetchCartItems();
-  }, [cartChange, router]);
+    fetchProd();
+  }, [router, ordersData]);
 
   return (
     <div className={`${isDarkTheme ? styles.darkMode : styles.lightMode}`}>
@@ -51,12 +58,14 @@ const Orders = () => {
           <div className=" mb-4">
             <div>
               <p className="mb-1">Shopping orders</p>
-              <p className="mb-0">You have ordered {data.length} items </p>
+              <p className="mb-0">
+                You have ordered {ordersData.length} items{" "}
+              </p>
             </div>
           </div>
 
-          {data.length > 0 ? (
-            data.map((item) => (
+          {ordersData.length > 0 ? (
+            ordersData.map((item) => (
               <ProductCartItem
                 setTotalSum={setTotalSum}
                 key={item.id}

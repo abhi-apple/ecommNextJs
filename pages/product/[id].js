@@ -3,65 +3,43 @@ import { useRouter } from "next/router";
 import styles from "../../styles/ProductDetails.module.css";
 import Link from "next/link";
 import { useTheme } from "../../context/ThemeContextProvider";
+import { FETCH_PRODUCT } from "../../api/queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { ADD_TO_CART } from "../../api/mutations";
 
 const ProductDetails = () => {
   const router = useRouter();
   const { id } = router.query;
   const { isDarkTheme } = useTheme();
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [addToCart] = useMutation(ADD_TO_CART);
+  // const [loading, setLoading] = useState(true);
+
+  const { data, loading } = useQuery(FETCH_PRODUCT, {
+    variables: {
+      id: id,
+    },
+  });
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User not authenticated");
-        }
-
-        const response = await fetch(
-          `https://fine-red-angler-wrap.cyclic.app/api/products/${id}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch product");
-        }
-
-        const data = await response.json();
-        setProduct(data.product);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
+    if (!loading && data) {
+      setProduct(data.product);
+    }
+  }, [data, loading]);
 
   const handleClick = async (e) => {
     e.preventDefault();
 
+    const phoneNumber = localStorage.getItem("phoneNumber");
     try {
-      const response = await fetch("/api/additem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
+      const { data } = await addToCart({
+        variables: {
+          productId: product.id,
+          phoneNumber,
         },
-        body: JSON.stringify({ id: product._id }),
       });
+      console.log("Product added to cart:", data);
 
-      if (!response.ok) {
-        throw new Error("Failed to add item to cart");
-      }
-
-      const data = await response.json();
-      console.log(data);
       if (data.ok) {
         alert("Item added to cart");
       } else {

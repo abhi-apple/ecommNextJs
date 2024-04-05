@@ -4,10 +4,13 @@ import { LOGIN } from "./api/endpoints.js";
 import { fetchPost } from "./api/api";
 import styles from "../styles/Login.module.css";
 import { useTheme } from "../context/ThemeContextProvider.js";
-
+import { useMutation } from "@apollo/client";
+import { LOGIN_USER } from "../api/mutations.js";
 const Login = () => {
   const router = useRouter();
   const { isDarkTheme } = useTheme();
+  const [loginUser] = useMutation(LOGIN_USER);
+
   const [formData, setFormData] = useState({
     phoneNumber: "",
     password: "",
@@ -23,22 +26,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetchPost(LOGIN, formData);
-      if (response.ok) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("userName", response.userName);
-        console.log("Login successful!");
-        router.push("/product");
-      } else {
-        console.log(response.message);
-        alert(response.message);
-        console.error("Login failed.");
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      alert(error.message);
+    const { phoneNumber, password } = formData; // Destructure phoneNumber and password from formData
+    const { data } = await loginUser({
+      variables: {
+        phoneNumber,
+        password,
+      },
+    });
+    if (data && data.loginUser && data.loginUser.token) {
+      localStorage.setItem("phoneNumber", phoneNumber);
+      console.log(data);
+      // Redirect user to a different page upon successful login
+      router.push("/product");
+    } else {
+      console.error("Login failed");
+      // Handle login failure, display error message, etc.
     }
   };
 
@@ -89,3 +91,21 @@ const Login = () => {
 };
 
 export default Login;
+
+// try {
+//   const response = await fetchPost(LOGIN, formData);
+//   if (data) {
+//     console.log(data, "logindata");
+//     // localStorage.setItem("token", response.token);
+//     // localStorage.setItem("userName", response.userName);
+//     console.log("Login successful!");
+//     router.push("/product");
+//   } else {
+//     // console.log(response.message);
+//     // alert(response.message);
+//     console.error("Login failed.");
+//   }
+// } catch (error) {
+//   console.error("Error during login:", error);
+//   alert(error.message);
+// }

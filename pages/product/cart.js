@@ -7,41 +7,70 @@ import { useRouter } from "next/router";
 import { fetchGetWithToken, fetchPost } from "../api/api";
 import { USER_DETAILS } from "../api/endpoints";
 import { useTheme } from "../../context/ThemeContextProvider";
-
+import { useMutation, useQuery } from "@apollo/client";
+import { client } from "../../api/apolloClient";
+import { FETCH_PRODUCT, FETCH_USER_CART } from "../../api/queries";
+import { PLACE_ORDER } from "../../api/mutations";
 const Cart = () => {
-  const [data, setData] = useState([]);
+  const [cartData, setcartData] = useState([]);
   const { isDarkTheme } = useTheme();
   const [totalsum, setTotalSum] = useState(0);
   const [allPrice, setallPrice] = useState([]);
   const [cartChange, setcartChange] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [orderPlace] = useMutation(PLACE_ORDER);
   const router = useRouter();
 
+  // const { data, loading } = useQuery(FETCH_USER_CART, {
+  //   variables: {
+  //     phoneNumber,
+  //   },
+  // });
+
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-        } else {
-          const response = await fetchGetWithToken(USER_DETAILS, token);
-          setData(response.user.cart);
-        }
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    if (!phoneNumber) {
+      router.push("/");
+    }
+    setPhoneNumber(phoneNumber);
+    const fetchProd = async () => {
+      const { data, loading } = await client.query({
+        query: FETCH_USER_CART,
+        variables: {
+          phoneNumber,
+        },
+      });
+      console.log(data, "this is data ");
+      if (!loading && data) {
+        setcartData(data.userCartItems);
       }
     };
 
-    fetchCartItems();
-  }, [cartChange]);
+    fetchProd();
+  }, [cartChange, cartData]);
+
+  // const handlePlaceOrder = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const headers = {
+  //       Authorization: token,
+  //     };
+  //     const response = await fetchPost("/users/placeorder", {}, headers);
+  //     setcartData(response?.user?.cart);
+  //   } catch (error) {
+  //     console.error("Error placing order:", error);
+  //   }
+  // };
 
   const handlePlaceOrder = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const headers = {
-        Authorization: token,
-      };
-      const response = await fetchPost("/users/placeorder", {}, headers);
-      setData(response?.user?.cart);
+      const phoneNumber = localStorage.getItem("phoneNumber");
+      await orderPlace({
+        variables: {
+          phoneNumber,
+        },
+      });
+      setCartItems([]);
     } catch (error) {
       console.error("Error placing order:", error);
     }
@@ -69,18 +98,22 @@ const Cart = () => {
           <div className=" mb-4">
             <div>
               <p className="mb-1">Shopping cart</p>
-              <p className="mb-0">You have {data.length} items in your cart</p>
+              <p className="mb-0">
+                You have {cartData.length} items in your cart
+              </p>
             </div>
           </div>
 
-          {data.length > 0 ? (
-            data.map((item) => (
+          {cartData.length > 0 ? (
+            cartData.map((item) => (
               <ProductCartItem
                 setTotalSum={setTotalSum}
                 key={item.id}
                 setallPrice={setallPrice}
                 setcartChange={setcartChange}
                 item={item}
+                cartData={cartData}
+                setcartData={setcartData}
                 page="cart"
               />
             ))
@@ -104,7 +137,7 @@ const Cart = () => {
           </h5>
           <p>${totalsum / 2}</p>
         </div>
-        {data.length > 0 && (
+        {cartData.length > 0 && (
           <div>
             <Link href="/product/orders">
               <button

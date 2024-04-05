@@ -8,8 +8,8 @@ const Home = () => {
   const router = useRouter();
   const { isDarkTheme } = useTheme();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    if (phoneNumber) {
       router.push("/product");
     }
   }, []);

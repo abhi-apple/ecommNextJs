@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ProductCard from "../../components/ProductCard.js";
 import styles from "../../styles/Products.module.css";
-
+import { FETCH_PRODUCTS } from "../../api/queries.js";
 import { useTheme } from "../../context/ThemeContextProvider.js";
+import { useQuery } from "@apollo/client";
 
 const Products = () => {
   const router = useRouter();
@@ -18,56 +19,31 @@ const Products = () => {
   const [multiSelect, setMultiSelect] = useState([]);
   const [allProducts, setallProducts] = useState([]);
   const [enableMulti, setEnableMulti] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  const { loading, error, data } = useQuery(FETCH_PRODUCTS, {
+    variables: {
+      category: categoryContext,
+      rating: avgratingContext,
+      filter: filterContext,
+    },
+  });
 
   useEffect(() => {
-    const fetchFilteredProducts = async () => {
-      setIsLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          router.push("/login");
-          return;
-        }
-
-        const requestBody = {
-          category: categoryContext,
-          filter: filterContext,
-          rating: avgratingContext,
-        };
-
-        const response = await fetch(
-          "https://fine-red-angler-wrap.cyclic.app/api/products/filter",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data.products);
-          setallProducts(data.products);
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
-          throw new Error("Failed to fetch products");
-        }
-      } catch (error) {
-        router.push("/login");
-        setIsLoading(false);
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchFilteredProducts();
-  }, [categoryContext, filterContext, avgratingContext]);
+    const phoneNumber = localStorage.getItem("phoneNumber");
+    if (!phoneNumber) {
+      router.push("/");
+    }
+    if (!loading && !error && data) {
+      setProducts(data.fetchProducts);
+      setallProducts(data.fetchProducts);
+      console.log(data, "data is");
+    }
+  }, [loading, error, data]);
 
   useEffect(() => {
     const handleSearch = () => {
+      console.log(allProducts, "all");
       const results = allProducts.filter(
         (product) =>
           product.title
@@ -141,7 +117,7 @@ const Products = () => {
 
   return (
     <div className={`${isDarkTheme ? styles.darkMode : styles.lightMode}`}>
-      {isLoading ? (
+      {loading ? (
         <div>Loading...</div>
       ) : (
         <div className="">

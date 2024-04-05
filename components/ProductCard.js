@@ -1,30 +1,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "../styles/ProductCard.module.css"; // Importing CSS module for styling
-
+import { ADD_TO_CART } from "../api/mutations";
+import { useMutation } from "@apollo/client";
 const ProductCard = ({ product, setmultiSelect, enableMulti }) => {
   const [isSelected, setIsSelected] = useState(false);
-
+  const [addToCart] = useMutation(ADD_TO_CART);
+  const phoneNumber = localStorage.getItem("phoneNumber");
   const handleClick = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/additem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
+      const { data } = await addToCart({
+        variables: {
+          productId: product.id,
+          phoneNumber,
         },
-        body: JSON.stringify({ id: product._id }),
       });
+      console.log("Product added to cart:", data);
 
-      if (!response.ok) {
-        throw new Error("Failed to add item to cart");
-      }
-
-      const data = await response.json();
-      console.log(data);
-      if (data.ok) {
+      if (data.AddToCart.ok) {
         alert("Item added to cart");
       } else {
         alert("Item already in cart");
@@ -54,7 +49,7 @@ const ProductCard = ({ product, setmultiSelect, enableMulti }) => {
       )}
       <div className={styles.productWhole}>
         <div className={styles.productDetails}>
-          <Link href={`/product/${product._id}`} passHref>
+          <Link href={`/product/${product.id}`} passHref>
             <img
               src={product.images[0]}
               alt={product.title}

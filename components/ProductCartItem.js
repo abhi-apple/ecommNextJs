@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/ProductCartItem.module.css";
 import { useTheme } from "../context/ThemeContextProvider";
+import { FETCH_PRODUCT } from "../api/queries";
+import { client } from "../api/apolloClient";
+import { useMutation } from "@apollo/client";
+import { DELETE_FROM_CART } from "../api/mutations";
 
 const ProductCartItem = ({
   item,
@@ -8,30 +12,47 @@ const ProductCartItem = ({
   page,
   setallPrice,
   setcartChange,
+  setcartData,
+  cartData,
 }) => {
   const [product, setproduct] = useState(null);
+  const [phoneNumber, setphoneNumber] = useState("");
   const { isDarkTheme } = useTheme();
+
+  const [deleteCart] = useMutation(DELETE_FROM_CART);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (token) {
-          const response = await fetch(
-            `https://fine-red-angler-wrap.cyclic.app/api/products/${item}`,
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
-          if (response.ok) {
-            const one = await response.json();
-            setproduct(one.product);
-            setTotalSum((prev) => prev + one.product.price);
-          } else {
-            throw new Error("Failed to fetch products");
-          }
-        }
+        const phoneNumber = localStorage.getItem("phoneNumber");
+        setphoneNumber(phoneNumber);
+        // const token = localStorage.getItem("token");
+        // if (token) {
+        //   const response = await fetch(
+        //     `https://fine-red-angler-wrap.cyclic.app/api/products/${item}`,
+        //     {
+        //       headers: {
+        //         Authorization: token,
+        //       },
+        //     }
+        //   );
+        //   if (response.ok) {
+        //     const one = await response.json();
+        //     setproduct(one.product);
+        //     setTotalSum((prev) => prev + one.product.price);
+        //   } else {
+        //     throw new Error("Failed to fetch products");
+        //   }
+        // }
+
+        const { data } = await client.query({
+          query: FETCH_PRODUCT,
+          variables: {
+            id: item,
+          },
+        });
+        setproduct(data.product);
+        console.log(data, "single prod");
+        return data;
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -69,27 +90,46 @@ const ProductCartItem = ({
   //   }
   // };
   const removeItemFromCart = async () => {
-    fetch("https://fine-red-angler-wrap.cyclic.app/api/users/removeitem", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        productId: item,
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setTotalSum((prev) => prev - product.price * 2);
-          setcartChange((prevCartChange) => !prevCartChange);
-        } else {
-          console.error("Error removing item from cart");
-        }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
+    // fetch("https://fine-red-angler-wrap.cyclic.app/api/users/removeitem", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: localStorage.getItem("token"),
+    //   },
+    //   body: JSON.stringify({
+    //     productId: item,
+    //   }),
+    // })
+    // .then((response) => {
+
+    // if (response.ok) {
+    //   setTotalSum((prev) => prev - product.price * 2);
+    //   setcartChange((prevCartChange) => !prevCartChange);
+    // } else {
+    //   console.error("Error removing item from cart");
+    // }
+    // })
+    // .catch((error) => {
+    //   console.error("Fetch error:", error);
+    // });
+
+    try {
+      const id = item;
+      console.log(id);
+      console.log(phoneNumber);
+      const { data } = await deleteCart({
+        variables: {
+          productId: id,
+          phoneNumber: phoneNumber,
+        },
       });
+      if (window.confirm("Product deleted successfully")) {
+        window.location.reload();
+      }
+      console.log("Product removed from cart:", data);
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+    }
   };
 
   return (

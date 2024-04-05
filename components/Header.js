@@ -23,6 +23,7 @@ const Header = () => {
   const [averageRating, setAverageRating] = useState(null);
   const [filter, setFilter] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [phoneNumber, setphoneNumber] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +31,7 @@ const Header = () => {
   };
 
   useEffect(() => {
+    setphoneNumber(localStorage.getItem("phoneNumber"));
     setuserName(localStorage.getItem("userName"));
   }, []);
 
@@ -57,10 +59,19 @@ const Header = () => {
     setfilterContext(null);
   };
   const handleCart = () => {
-    router.push("/product/cart");
+    console.log(phoneNumber, "phno");
+    if (!phoneNumber) {
+      router.push("/");
+    } else {
+      router.push("/product/cart");
+    }
   };
   const handleOrder = () => {
-    router.push("/product/orders");
+    if (!phoneNumber) {
+      router.push("/");
+    } else {
+      router.push("/product/orders");
+    }
   };
   const handleLogOut = () => {
     alert("Logged out");
@@ -279,7 +290,7 @@ const Header = () => {
             </button>
           ) : userName ? (
             <button className={`btn btn-warning ${styles.applyFilter}`}>
-              Hello! {localStorage.getItem("userName")}
+              Hello! {localStorage.getItem("phoneNumber")}
             </button>
           ) : (
             <Link className="navbar-brand" href="/login">
